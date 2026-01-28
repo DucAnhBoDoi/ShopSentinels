@@ -1,0 +1,282 @@
+/* ===== RESET & BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', Courier, monospace;
+    background: linear-gradient(180deg, #2a3d3f 0%, #1a2426 50%, #0f1618 100%);
+    background-attachment: fixed;
+    color: #c8d4d6;
+    min-height: 100vh;
+    line-height: 1.6;
+    position: relative;
+}
+
+/* Dark overlay pattern */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        repeating-linear-gradient(0deg, rgba(0,0,0,0.1) 0px, transparent 1px, transparent 2px, rgba(0,0,0,0.1) 3px),
+        repeating-linear-gradient(90deg, rgba(0,0,0,0.1) 0px, transparent 1px, transparent 2px, rgba(0,0,0,0.1) 3px);
+    pointer-events: none;
+    opacity: 0.3;
+    z-index: 1;
+}
+
+body > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* ===== HOME BUTTON ===== */
+.btn-home {
+    position: fixed;
+    top: 2rem;
+    left: 2rem;
+    background: linear-gradient(180deg, #5a7478, #3d5458);
+    color: #e8f0f2;
+    padding: 0.7rem 1.5rem;
+    border: 2px solid #4a6569;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 1.5px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    box-shadow: 0 3px 0 #2a3d3f, 0 5px 10px rgba(0, 0, 0, 0.3);
+    text-transform: uppercase;
+    z-index: 100;
+}
+
+.btn-home:hover {
+    background: linear-gradient(180deg, #6b8588, #4a6569);
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #2a3d3f, 0 3px 5px rgba(0, 0, 0, 0.3);
+}
+
+.btn-home:active {
+    transform: translateY(3px);
+    box-shadow: none;
+}
+
+/* ===== AUTH CONTAINER ===== */
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.auth-box {
+    background: linear-gradient(180deg, #2a3d3f, #1a2426);
+    border: 3px solid #4a6569;
+    border-radius: 8px;
+    padding: 3rem 2.5rem;
+    max-width: 450px;
+    width: 100%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+}
+
+.auth-logo {
+    font-size: 2.5rem;
+    font-weight: 900;
+    letter-spacing: 5px;
+    color: #e8f0f2;
+    text-align: center;
+    margin-bottom: 2rem;
+    text-shadow: 
+        2px 2px 0px #4a6569,
+        4px 4px 0px rgba(0, 0, 0, 0.3),
+        0 0 20px rgba(200, 212, 214, 0.3);
+    font-family: 'Impact', 'Arial Black', sans-serif;
+}
+
+/* ===== TABS ===== */
+.auth-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.auth-tab {
+    flex: 1;
+    background: linear-gradient(180deg, #3d5458, #2a3d3f);
+    color: #c8d4d6;
+    border: 2px solid #4a6569;
+    padding: 0.8rem;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Courier New', Courier, monospace;
+    text-transform: uppercase;
+    box-shadow: 0 3px 0 #1a2426;
+    border-radius: 4px;
+}
+
+.auth-tab:hover {
+    background: linear-gradient(180deg, #4a6569, #3d5458);
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #1a2426;
+}
+
+.auth-tab.active {
+    background: linear-gradient(180deg, #6b8588, #5a7478);
+    color: #e8f0f2;
+    border-color: #8fa9ac;
+    transform: translateY(3px);
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+/* ===== FORM ===== */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    color: #c8d4d6;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.form-group input {
+    background: rgba(15, 22, 24, 0.8);
+    border: 2px solid #3d5458;
+    border-radius: 4px;
+    padding: 0.9rem;
+    color: #e8f0f2;
+    font-size: 1rem;
+    font-family: 'Courier New', Courier, monospace;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #6b8588;
+    background: rgba(15, 22, 24, 1);
+    box-shadow: 0 0 0 3px rgba(107, 133, 136, 0.2);
+}
+
+.form-group input::placeholder {
+    color: #5a7478;
+}
+
+/* ===== SUBMIT BUTTON ===== */
+.btn-submit {
+    background: linear-gradient(180deg, #5a7478, #3d5458);
+    color: #e8f0f2;
+    border: 2px solid #4a6569;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 0 #2a3d3f, 0 6px 15px rgba(0, 0, 0, 0.4);
+    border-radius: 4px;
+    font-family: 'Courier New', Courier, monospace;
+    text-transform: uppercase;
+    margin-top: 1rem;
+}
+
+.btn-submit:hover {
+    background: linear-gradient(180deg, #6b8588, #4a6569);
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #2a3d3f, 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.btn-submit:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
+
+/* ===== MESSAGE ===== */
+.auth-message {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding: 0.8rem;
+    border-radius: 4px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.auth-message.error {
+    color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.1);
+    border: 2px solid #ff6b6b;
+}
+
+.auth-message.success {
+    color: #51cf66;
+    background: rgba(81, 207, 102, 0.1);
+    border: 2px solid #51cf66;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .btn-home {
+        top: 1rem;
+        left: 1rem;
+        padding: 0.6rem 1.2rem;
+        font-size: 0.8rem;
+    }
+
+    .auth-box {
+        padding: 2rem 1.5rem;
+    }
+
+    .auth-logo {
+        font-size: 2rem;
+        letter-spacing: 3px;
+    }
+
+    .auth-container {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .btn-home {
+        top: 0.5rem;
+        left: 0.5rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.75rem;
+    }
+
+    .auth-box {
+        padding: 1.5rem 1rem;
+    }
+
+    .auth-logo {
+        font-size: 1.8rem;
+    }
+
+    .auth-tabs {
+        flex-direction: column;
+    }
+
+    .auth-tab {
+        width: 100%;
+    }
+}

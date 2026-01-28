@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinels - Đăng nhập</title>
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+
+    <a href="/" class="btn-home">TRANG CHỦ</a>
+
+    <div class="auth-container">
+        <div class="auth-box">
+            <div class="auth-logo">SENTINELS</div>
+            
+            <!-- Tabs -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="loginTab">ĐĂNG NHẬP</button>
+                <button class="auth-tab" id="registerTab">ĐĂNG KÝ</button>
+            </div>
+
+            <!-- Login Form -->
+            <form class="auth-form" id="loginForm" action="/login" method="POST">
+                <div class="form-group">
+                    <label for="login-username">TÀI KHOẢN</label>
+                    <input 
+                        type="text" 
+                        id="login-username" 
+                        name="username" 
+                        placeholder="Nhập tên tài khoản"
+                        required
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="login-password">MẬT KHẨU</label>
+                    <input 
+                        type="password" 
+                        id="login-password" 
+                        name="password" 
+                        placeholder="Nhập mật khẩu"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="btn-submit">ĐĂNG NHẬP</button>
+            </form>
+
+            <!-- Register Form -->
+            <form class="auth-form" id="registerForm" action="/register" method="POST" style="display: none;">
+                <div class="form-group">
+                    <label for="register-username">TÀI KHOẢN</label>
+                    <input 
+                        type="text" 
+                        id="register-username" 
+                        name="username" 
+                        placeholder="Nhập tên tài khoản"
+                        required
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="register-password">MẬT KHẨU</label>
+                    <input 
+                        type="password" 
+                        id="register-password" 
+                        name="password" 
+                        placeholder="Nhập mật khẩu"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="register-password-confirm">XÁC NHẬN MẬT KHẨU</label>
+                    <input 
+                        type="password" 
+                        id="register-password-confirm" 
+                        name="passwordConfirm" 
+                        placeholder="Nhập lại mật khẩu"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="btn-submit">ĐĂNG KÝ</button>
+            </form>
+
+            <!-- Message (for error/success) -->
+            <% if (typeof message !== 'undefined' && message) { %>
+                <div class="auth-message <%= messageType || 'error' %>" id="authMessage">
+                    <%= message %>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <script>
+        const loginTab = document.getElementById('loginTab');
+        const registerTab = document.getElementById('registerTab');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const authMessage = document.getElementById('authMessage');
+
+        loginTab.addEventListener('click', () => {
+            loginTab.classList.add('active');
+            registerTab.classList.remove('active');
+            loginForm.style.display = 'flex';
+            registerForm.style.display = 'none';
+            
+            // Ẩn message khi chuyển tab
+            if (authMessage) {
+                authMessage.style.display = 'none';
+            }
+        });
+
+        registerTab.addEventListener('click', () => {
+            registerTab.classList.add('active');
+            loginTab.classList.remove('active');
+            registerForm.style.display = 'flex';
+            loginForm.style.display = 'none';
+            
+            // Ẩn message khi chuyển tab
+            if (authMessage) {
+                authMessage.style.display = 'none';
+            }
+        });
+
+        // Password confirmation validation
+        registerForm.addEventListener('submit', (e) => {
+            const password = document.getElementById('register-password').value;
+            const passwordConfirm = document.getElementById('register-password-confirm').value;
+            
+            if (password !== passwordConfirm) {
+                e.preventDefault();
+                alert('Mật khẩu xác nhận không khớp!');
+            }
+        });
+    </script>
+
+</body>
+</html>

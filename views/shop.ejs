@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinels Shop</title>
+    <link rel="stylesheet" href="/css/shop.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">SENTINELS</div>
+        <div class="user-panel">
+            <% if (user) { %>
+                <div class="user-info">
+                    <span class="username"><%= user.username %></span>
+                    <span class="coin-badge"><%= user.coin %> COIN</span>
+                </div>
+                <a href="/logout" class="btn-logout">ĐĂNG XUẤT</a>
+            <% } else { %>
+                <a href="/login" class="btn-login">ĐĂNG NHẬP</a>
+            <% } %>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <h3 class="section-title">CHỌN GÓI NẠP COIN</h3>
+
+        <div class="items-grid">
+            <!-- Gói 20.000 VNĐ -->
+            <div class="item-card">
+                <div class="item-img">
+                    <div class="coin-icon">💰</div>
+                </div>
+                <div class="item-name">GÓI BRONZE</div>
+                <div class="item-coin">100 COINS</div>
+                <div class="item-price">20.000 VNĐ</div>
+                <% if (user) { %>
+                    <form action="/buy" method="POST">
+                        <input type="hidden" name="userId" value="<%= user._id %>">
+                        <input type="hidden" name="coinAmount" value="100">
+                        <input type="hidden" name="price" value="20000">
+                        <button type="submit" class="btn-buy">MUA NGAY</button>
+                    </form>
+                <% } else { %>
+                    <a href="/login" class="btn-buy disabled">ĐĂNG NHẬP</a>
+                <% } %>
+            </div>
+
+            <!-- Gói 50.000 VNĐ -->
+            <div class="item-card">
+                <div class="item-img">
+                    <div class="coin-icon">💰</div>
+                </div>
+                <div class="item-name">GÓI SILVER</div>
+                <div class="item-coin">300 COINS</div>
+                <div class="item-price">50.000 VNĐ</div>
+                <% if (user) { %>
+                    <form action="/buy" method="POST">
+                        <input type="hidden" name="userId" value="<%= user._id %>">
+                        <input type="hidden" name="coinAmount" value="300">
+                        <input type="hidden" name="price" value="50000">
+                        <button type="submit" class="btn-buy">MUA NGAY</button>
+                    </form>
+                <% } else { %>
+                    <a href="/login" class="btn-buy disabled">ĐĂNG NHẬP</a>
+                <% } %>
+            </div>
+
+            <!-- Gói 100.000 VNĐ -->
+            <div class="item-card">
+                <div class="item-img">
+                    <div class="coin-icon">💎</div>
+                </div>
+                <div class="item-name">GÓI GOLD</div>
+                <div class="item-coin">700 COINS</div>
+                <div class="item-price">100.000 VNĐ</div>
+                <% if (user) { %>
+                    <form action="/buy" method="POST">
+                        <input type="hidden" name="userId" value="<%= user._id %>">
+                        <input type="hidden" name="coinAmount" value="700">
+                        <input type="hidden" name="price" value="100000">
+                        <button type="submit" class="btn-buy">MUA NGAY</button>
+                    </form>
+                <% } else { %>
+                    <a href="/login" class="btn-buy disabled">ĐĂNG NHẬP</a>
+                <% } %>
+            </div>
+
+            <!-- Gói 200.000 VNĐ -->
+            <div class="item-card">
+                <div class="item-img">
+                    <div class="coin-icon">💎</div>
+                </div>
+                <div class="item-name">GÓI PLATINUM</div>
+                <div class="item-coin">1.500 COINS</div>
+                <div class="item-price">200.000 VNĐ</div>
+                <% if (user) { %>
+                    <form action="/buy" method="POST">
+                        <input type="hidden" name="userId" value="<%= user._id %>">
+                        <input type="hidden" name="coinAmount" value="1500">
+                        <input type="hidden" name="price" value="200000">
+                        <button type="submit" class="btn-buy">MUA NGAY</button>
+                    </form>
+                <% } else { %>
+                    <a href="/login" class="btn-buy disabled">ĐĂNG NHẬP</a>
+                <% } %>
+            </div>
+
+            <!-- Gói 500.000 VNĐ -->
+            <div class="item-card popular">
+                <div class="popular-badge">PHỔ BIẾN</div>
+                <div class="item-img">
+                    <div class="coin-icon">💎</div>
+                </div>
+                <div class="item-name">GÓI DIAMOND</div>
+                <div class="item-coin">4.000 COINS</div>
+                <div class="item-price">500.000 VNĐ</div>
+                <% if (user) { %>
+                    <form action="/buy" method="POST">
+                        <input type="hidden" name="userId" value="<%= user._id %>">
+                        <input type="hidden" name="coinAmount" value="4000">
+                        <input type="hidden" name="price" value="500000">
+                        <button type="submit" class="btn-buy">MUA NGAY</button>
+                    </form>
+                <% } else { %>
+                    <a href="/login" class="btn-buy disabled">ĐĂNG NHẬP</a>
+                <% } %>
+            </div>
+
+            <!-- Gói 1.000.000 VNĐ -->
+            <div class="item-card">
+                <div class="item-img">
+                    <div class="coin-icon">👑</div>
+                </div>
+                <div class="item-name">GÓI MASTER</div>
+                <div class="item-coin">9.000 COINS</div>
+                <div class="item-price">1.000.000 VNĐ</div>
+                <% if (user) { %>
+                    <form action="/buy" method="POST">
+                        <input type="hidden" name="userId" value="<%= user._id %>">
+                        <input type="hidden" name="coinAmount" value="9000">
+                        <input type="hidden" name="price" value="1000000">
+                        <button type="submit" class="btn-buy">MUA NGAY</button>
+                    </form>
+                <% } else { %>
+                    <a href="/login" class="btn-buy disabled">ĐĂNG NHẬP</a>
+                <% } %>
+            </div>
+
+            <!-- Gói 1.500.000 VNĐ -->
+            <div class="item-card">
+                <div class="item-img">
+                    <div class="coin-icon">👑</div>
+                </div>
+                <div class="item-name">GÓI LEGEND</div>
+                <div class="item-coin">15.000 COINS</div>
+                <div class="item-price">1.500.000 VNĐ</div>
+                <% if (user) { %>
+                    <form action="/buy" method="POST">
+                        <input type="hidden" name="userId" value="<%= user._id %>">
+                        <input type="hidden" name="coinAmount" value="15000">
+                        <input type="hidden" name="price" value="1500000">
+                        <button type="submit" class="btn-buy">MUA NGAY</button>
+                    </form>
+                <% } else { %>
+                    <a href="/login" class="btn-buy disabled">ĐĂNG NHẬP</a>
+                <% } %>
+            </div>
+
+            <!-- Gói 2.000.000 VNĐ -->
+            <div class="item-card ultimate">
+                <div class="ultimate-badge">TỐT NHẤT</div>
+                <div class="item-img">
+                    <div class="coin-icon">⭐</div>
+                </div>
+                <div class="item-name">GÓI ULTIMATE</div>
+                <div class="item-coin">25.000 COINS</div>
+                <div class="item-price">2.000.000 VNĐ</div>
+                <% if (user) { %>
+                    <form action="/buy" method="POST">
+                        <input type="hidden" name="userId" value="<%= user._id %>">
+                        <input type="hidden" name="coinAmount" value="25000">
+                        <input type="hidden" name="price" value="2000000">
+                        <button type="submit" class="btn-buy">MUA NGAY</button>
+                    </form>
+                <% } else { %>
+                    <a href="/login" class="btn-buy disabled">ĐĂNG NHẬP</a>
+                <% } %>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 SENTINELS</p>
+    </footer>
+
+</body>
+</html>

@@ -56,11 +56,44 @@ app.use(async (req, res, next) => {
 
 // --- ROUTES ---
 
-// 1. Trang Chủ (Shop)
-app.get('/', (req, res) => {
-    const user = req.session.user || null;
-    res.render('shop', { user });
+// ============================================================
+// 1. Trang Chủ (Shop) - ĐÃ CẬP NHẬT AUTO LOGIN TỪ UNITY
+// ============================================================
+app.get('/', async (req, res) => {
+    try {
+        // --- LOGIC AUTO LOGIN (NHẬN DIỆN NGƯỜI DÙNG TỪ UNITY) ---
+        const quickLoginId = req.query.quickLogin;
+
+        if (quickLoginId) {
+            // Tìm user dựa trên ID được gửi từ Unity
+            const user = await User.findById(quickLoginId);
+            if (user) {
+                // Tự động Đăng nhập (Lưu vào Session)
+                req.session.userId = user._id.toString();
+                req.session.user = {
+                    _id: user._id.toString(),
+                    username: user.username,
+                    coin: user.coin
+                };
+                console.log(`[Auto Login] Unity User ${user.username} đã tự động đăng nhập.`);
+                
+                // Redirect về trang chủ để xóa ?quickLogin trên thanh địa chỉ nhìn cho đẹp
+                return res.redirect('/'); 
+            }
+        }
+
+        // --- RENDER GIAO DIỆN ---
+        // Lấy thông tin user từ session (nếu đã đăng nhập)
+        const user = req.session.user || null;
+        res.render('shop', { user });
+
+    } catch (error) {
+        console.error('Home Page Error:', error);
+        res.render('shop', { user: null });
+    }
 });
+// ============================================================
+
 
 // 2. Trang Đăng nhập/Đăng ký
 app.get('/login', (req, res) => {
@@ -359,6 +392,11 @@ app.post('/api/register', async (req, res) => {
             }
         });
     } catch (error) {
+        // Sửa lỗi 500 thành 400 nếu do validation
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(err => err.message);
+            return res.status(400).json({ success: false, message: messages.join(', ') });
+        }
         res.status(500).json({ success: false, message: error.message });
     }
 });

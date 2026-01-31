@@ -305,6 +305,86 @@ app.get('/api/users', async (req, res) => {
     }
 });
 
+// --- API CHO UNITY ---
+
+// 1. API Đăng nhập
+app.post('/api/login', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        const user = await User.findOne({ username, password });
+        
+        if (user) {
+            // Trả về dữ liệu User dưới dạng JSON
+            res.status(200).json({
+                success: true,
+                message: "Đăng nhập thành công",
+                data: {
+                    _id: user._id,
+                    username: user.username,
+                    coin: user.coin
+                }
+            });
+        } else {
+            res.status(401).json({ success: false, message: "Sai tài khoản hoặc mật khẩu" });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// 2. API Đăng ký
+app.post('/api/register', async (req, res) => {
+    try {
+        const { username, password, passwordConfirm } = req.body;
+
+        if (password !== passwordConfirm) {
+            return res.status(400).json({ success: false, message: "Mật khẩu xác nhận không khớp" });
+        }
+        
+        const existingUser = await User.findOne({ username });
+        if (existingUser) {
+            return res.status(400).json({ success: false, message: "Tài khoản đã tồn tại" });
+        }
+
+        const newUser = new User({ username, password, coin: 0 });
+        await newUser.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Đăng ký thành công",
+            data: {
+                _id: newUser._id,
+                username: newUser.username,
+                coin: newUser.coin
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// 3. API Lấy thông tin User mới nhất (Để cập nhật Coin trong game)
+app.get('/api/user/:id', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (user) {
+            res.status(200).json({
+                success: true,
+                data: {
+                    _id: user._id,
+                    username: user.username,
+                    coin: user.coin
+                }
+            });
+        } else {
+            res.status(404).json({ success: false, message: "User not found" });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

@@ -5,6 +5,7 @@ const session = require('express-session');
 const connectDB = require('./db');
 const User = require('./User');
 const MoMoPayment = require('./momoPayment');
+const bcrypt = require('bcryptjs');
 
 const app = express();
 
@@ -92,8 +93,8 @@ app.get('/', async (req, res) => {
         res.render('shop', { user: null });
     }
 });
-// ============================================================
 
+// ============================================================
 
 // 2. Trang Đăng nhập/Đăng ký
 app.get('/login', (req, res) => {
@@ -102,7 +103,7 @@ app.get('/login', (req, res) => {
     res.render('login', { message, messageType });
 });
 
-// 3. Xử lý Đăng Ký
+// 3. Xử lý Đăng Ký (WEB) - ĐÃ TÍCH HỢP BCRYPT
 app.post('/register', async (req, res) => {
     try {
         const { username, password, passwordConfirm } = req.body;
@@ -128,16 +129,20 @@ app.post('/register', async (req, res) => {
             return res.redirect('/login?error=Tên tài khoản đã tồn tại!');
         }
         
-        // Tạo user mới
+        // --- BẮT ĐẦU MÃ HÓA PASSWORD ---
+        const salt = await bcrypt.genSalt(10); // Tạo muối
+        const hashedPassword = await bcrypt.hash(password, salt); // Mã hóa
+        
+        // Tạo user mới với password đã mã hóa
         const newUser = new User({ 
             username, 
-            password, // Lưu ý: Trong production nên hash password bằng bcrypt
+            password: hashedPassword, // Lưu hash, không lưu plain text
             coin: 0 
         });
         
         await newUser.save();
         
-        console.log(`[Register] User mới: ${username}`);
+        console.log(`[Register] User mới: ${username} (Đã mã hóa pass)`);
         res.redirect('/login?msg=Đăng ký thành công! Mời đăng nhập.');
     } catch (error) {
         console.error('Register error:', error);
@@ -152,25 +157,34 @@ app.post('/register', async (req, res) => {
     }
 });
 
-// 4. Xử lý Đăng Nhập
+// 4. Xử lý Đăng Nhập (WEB) - ĐÃ TÍCH HỢP BCRYPT
 app.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
-        const user = await User.findOne({ username, password });
+        
+        // 1. Tìm user theo username
+        const user = await User.findOne({ username });
         
         if (user) {
-            // Lưu user vào session
-            req.session.userId = user._id.toString();
-            req.session.user = {
-                _id: user._id.toString(),
-                username: user.username,
-                coin: user.coin
-            };
-            console.log(`[Login] User ${username} đã đăng nhập`);
-            res.redirect('/');
-        } else {
-            res.redirect('/login?error=Sai tên đăng nhập hoặc mật khẩu!');
+            // 2. So sánh mật khẩu nhập vào (plain) với mật khẩu trong DB (hash)
+            const isMatch = await bcrypt.compare(password, user.password);
+
+            if (isMatch) {
+                // Đăng nhập thành công -> Lưu session
+                req.session.userId = user._id.toString();
+                req.session.user = {
+                    _id: user._id.toString(),
+                    username: user.username,
+                    coin: user.coin
+                };
+                console.log(`[Login] User ${username} đã đăng nhập`);
+                return res.redirect('/');
+            }
         }
+        
+        // Nếu không tìm thấy user hoặc mật khẩu sai
+        res.redirect('/login?error=Sai tên đăng nhập hoặc mật khẩu!');
+        
     } catch (error) {
         console.error('Login error:', error);
         res.redirect('/login?error=Có lỗi xảy ra, vui lòng thử lại!');
@@ -331,6 +345,7 @@ app.post('/payment/momo/ipn', async (req, res) => {
 // 9. API - Xem danh sách user (để test)
 app.get('/api/users', async (req, res) => {
     try {
+        // Chỉ lấy username, coin, createdAt - KHÔNG LẤY PASSWORD
         const users = await User.find({}, 'username coin createdAt');
         res.json(users);
     } catch (error) {
@@ -340,32 +355,41 @@ app.get('/api/users', async (req, res) => {
 
 // --- API CHO UNITY ---
 
-// 1. API Đăng nhập
+// 1. API Đăng nhập (UNITY) - ĐÃ TÍCH HỢP BCRYPT
 app.post('/api/login', async (req, res) => {
     try {
         const { username, password } = req.body;
-        const user = await User.findOne({ username, password });
+        
+        // 1. Tìm user bằng username
+        const user = await User.findOne({ username });
         
         if (user) {
-            // Trả về dữ liệu User dưới dạng JSON
-            res.status(200).json({
-                success: true,
-                message: "Đăng nhập thành công",
-                data: {
-                    _id: user._id,
-                    username: user.username,
-                    coin: user.coin
-                }
-            });
-        } else {
-            res.status(401).json({ success: false, message: "Sai tài khoản hoặc mật khẩu" });
+            // 2. So sánh mật khẩu bằng bcrypt
+            const isMatch = await bcrypt.compare(password, user.password);
+
+            if (isMatch) {
+                // Trả về dữ liệu User nếu đúng pass
+                return res.status(200).json({
+                    success: true,
+                    message: "Đăng nhập thành công",
+                    data: {
+                        _id: user._id,
+                        username: user.username,
+                        coin: user.coin
+                    }
+                });
+            }
         }
+        
+        // Nếu không tìm thấy hoặc sai pass
+        res.status(401).json({ success: false, message: "Sai tài khoản hoặc mật khẩu" });
+        
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
 });
 
-// 2. API Đăng ký
+// 2. API Đăng ký (UNITY) - ĐÃ TÍCH HỢP BCRYPT
 app.post('/api/register', async (req, res) => {
     try {
         const { username, password, passwordConfirm } = req.body;
@@ -379,7 +403,16 @@ app.post('/api/register', async (req, res) => {
             return res.status(400).json({ success: false, message: "Tài khoản đã tồn tại" });
         }
 
-        const newUser = new User({ username, password, coin: 0 });
+        // --- MÃ HÓA PASS ---
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        // Lưu user với pass đã mã hóa
+        const newUser = new User({ 
+            username, 
+            password: hashedPassword, 
+            coin: 0 
+        });
         await newUser.save();
 
         res.status(200).json({
@@ -392,7 +425,6 @@ app.post('/api/register', async (req, res) => {
             }
         });
     } catch (error) {
-        // Sửa lỗi 500 thành 400 nếu do validation
         if (error.name === 'ValidationError') {
             const messages = Object.values(error.errors).map(err => err.message);
             return res.status(400).json({ success: false, message: messages.join(', ') });
@@ -401,7 +433,7 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-// 3. API Lấy thông tin User mới nhất (Để cập nhật Coin trong game)
+// 3. API Lấy thông tin User mới nhất
 app.get('/api/user/:id', async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
@@ -427,7 +459,7 @@ app.get('/api/user/:id', async (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log('='.repeat(50));
-    console.log('🎮 SENTINELS SHOP SERVER');
+    console.log('🎮 SENTINELS SHOP SERVER (With BCrypt Security)');
     console.log('='.repeat(50));
     console.log(`✅ Server đang chạy: http://localhost:${PORT}`);
     console.log(`📝 Xem users: http://localhost:${PORT}/api/users`);
